@@ -1,0 +1,78 @@
+<configuration>
+
+    <property name="loggingDir" value="logs"/>
+
+    <conversionRule conversionWord="coloredLevel" converterClass="play.api.Logger$ColoredLevel"/>
+
+    <!--
+      Application logs (includes all logs)
+     -->
+    <appender name="APP_LOG" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${loggingDir}/batch.application.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${loggingDir}/%d/batch.application.log.gz</fileNamePattern>
+            <maxHistory>7</maxHistory>
+            <cleanHistoryOnStart>true</cleanHistoryOnStart>
+        </rollingPolicy>
+        <encoder>
+            <charset>UTF-8</charset>
+            <pattern>%date [%p] - from %logger %message %n%xException</pattern>
+        </encoder>
+        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+            <level>INFO</level>
+        </filter>
+    </appender>
+
+    <!--
+      Unexpected error logs
+    -->
+    <appender name="UNEXPECTED_ERROR_LOG" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${loggingDir}/batch.error.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${loggingDir}/%d/batch.error.log.gz</fileNamePattern>
+            <maxHistory>14</maxHistory>
+            <cleanHistoryOnStart>true</cleanHistoryOnStart>
+        </rollingPolicy>
+        <encoder>
+            <charset>UTF-8</charset>
+            <pattern>%date [%p] - from %logger %message %n%xException</pattern>
+        </encoder>
+        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+            <level>ERROR</level>
+        </filter>
+    </appender>
+
+    <!--
+      Console logs
+    -->
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+            <level>DEBUG</level>
+        </filter>
+        <encoder>
+            <charset>UTF-8</charset>
+            <pattern>%date [%p] - from %logger %message %n%xException</pattern>
+        </encoder>
+    </appender>
+
+    <!-- scalikejdbc logs -->
+    <logger name="scalikejdbc" level="DEBUG"/>
+
+    <!-- general logger -->
+    <logger name="thirdParty.logger" level="DEBUG"/>
+
+    <!-- unexpected error logger -->
+    <logger name="thirdParty.unexpectedError" level="DEBUG">
+        <appender-ref ref="UNEXPECTED_ERROR_LOG"/>
+    </logger>
+
+    <!-- com.google.inject -->
+    <logger name="com.google.inject" level="INFO"/>
+
+    <!-- Default -->
+    <root level="DEBUG">
+        <appender-ref ref="STDOUT"/>
+        <appender-ref ref="APP_LOG"/>
+    </root>
+
+</configuration>
